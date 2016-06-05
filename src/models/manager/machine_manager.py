@@ -1,5 +1,6 @@
-from .base_manager import BaseManager
+from models.manager import BaseManager
 
 
 class MachineManager(BaseManager):
     KEY = 'machines'
+

@@ -4,6 +4,7 @@ import etcd
 import gevent
 from api import Api
 from engine import Engine
+from agent import Agent
 from models.manager import VolumeManager, MachineManager
 from utils import Service
 
@@ -22,9 +23,8 @@ class Cobalt(Service):
 
         services = {
             'engine': Engine(self.etcd, self.volume_manager, self.machine_manager, self.config['engine']),
-            'api': Api(self.volume_manager, self.config['api'])
-            # TODO add api / agent here
-            # 'api', 'agent'
+            'api': Api(self.volume_manager, self.config['api']),
+            'agent': Agent(self.machine_manager, self.volume_manager, self.config['agent'])
         }
 
         self.services = {}
@@ -59,10 +59,6 @@ class Cobalt(Service):
 
     @staticmethod
     def _create_machine_manager(etcd):
-        return MachineManager(etcd)
-
-
-    def _create_machine_manager(self, etcd):
         return MachineManager(etcd)
 
 
