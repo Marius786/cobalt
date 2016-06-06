@@ -32,9 +32,15 @@ config = {
     'agent': {
         'agent_ttl': 60,
         'max_error_count': 3,
+        'max_error_timeout': 10,
         'node': {
             'volume_path': '/volumes',
-            'conf_path': '/etc/cobalt.conf'
+            'conf_path': '/etc/cobalt.conf',
+            'max_fill': 0.8,
+            'conf': {
+                'name': '',
+                'labels': []
+            }
         },
         'watch_timeout': 10
     },
