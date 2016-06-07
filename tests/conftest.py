@@ -1,3 +1,17 @@
+# Copyright 2016 PressLabs SRL
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from pytest import fixture
 
 from api import Api
@@ -5,6 +19,11 @@ from agent import Agent
 from models.manager import VolumeManager, MachineManager
 from models.driver import BTRFSDriver
 from models.node import Node
+
+
+@fixture
+def p_signal(mocker):
+    return mocker.patch('signal.signal')
 
 
 @fixture
@@ -212,13 +231,15 @@ class Dummy:
             self.__setattr__(key, val)
 
 
-dummy_ready_volume = Dummy(value={'name': 'test', 'state': 'ready', 'control': {'parent_id': ''}},
-                           value_json='{"name": "test", "state": "ready", "control": {"parent_id": ""}}',
-                           key='/volumes/1')
+dummy_ready_volume = Dummy(
+    value={'name': 'test', 'state': 'ready', 'control': {'parent_id': ''}},
+    value_json='{"name": "test", "state": "ready", "control": {"parent_id": ""}}',
+    key='/volumes/1')
 
-dummy_invalid_state_volume = Dummy(value={'name': 'test', 'state': 'NONE', 'control': {'parent_id': ''}},
-                                   value_json='{"name": "test", "state": "NONE", "control": {"parent_id": ""}}',
-                                   key='/volumes/2')
+dummy_invalid_state_volume = Dummy(
+    value={'name': 'test', 'state': 'NONE', 'control': {'parent_id': ''}},
+    value_json='{"name": "test", "state": "NONE", "control": {"parent_id": ""}}',
+    key='/volumes/2')
 
 dummy_machines = [Dummy(value={},
                         value_json='{}',

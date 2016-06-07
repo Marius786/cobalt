@@ -1,6 +1,21 @@
+# Copyright 2016 PressLabs SRL
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from pytest import mark
 
 from engine import Executor
+from tests.conftest import Dummy
 
 
 class TestExecutor:
@@ -25,7 +40,7 @@ class TestExecutor:
 
         p_time_sleep.assert_called_with(executor.delay)
 
-    def reset(self, executor):
+    def test_reset(self, executor):
         executor._should_reset = False
         executor._watch_index = 1
 
@@ -33,6 +48,19 @@ class TestExecutor:
 
         assert executor._should_reset
         assert executor._watch_index is None
+
+    @mark.parametrize('volume,next_state', [
+        [Dummy(value={'control': {'parent_id': ''},
+                      'requested': {'reserved_size': 1},
+                      'actual': {'reserved_size': 1}}), 'error'],
+        [Dummy(value={'control': {'parent_id': ''},
+                      'requested': {'reserved_size': 1},
+                      'actual': {'reserved_size': 2}}), 'resizing'],
+        [Dummy(value={'control': {'parent_id': '1'}}), 'cloning']
+    ])
+    def test_next_state(self, volume, next_state, executor):
+        got_state = executor._next_state(volume)
+        assert got_state == next_state
 
     def test_tick_with_reset(self, mocker, executor, p_executor_process, p_volume_manager_all):
         directory = mocker.MagicMock(etcd_index=0)
